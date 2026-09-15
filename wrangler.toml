@@ -1,0 +1,13 @@
+name = "chadbattle"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+account_id = "61c9a32c26ea67b8457a73c9e71b752e"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "chadbattle"
+database_id = "b2622ea7-6956-4550-a33e-bad16d968622"
+
+# Понедельник 00:00 UTC: фиксируем позиции → «взлёты и падения» недели
+[triggers]
+crons = ["0 0 * * 1"]

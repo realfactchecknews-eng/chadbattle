@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CHADBATTLE — рейтинг чадов</title>
+<meta name="description" content="Народный рейтинг чадов: батлы 1 на 1, взлёты и падения недели, новости looksmaxxing.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>♛</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0a;--card:#111;--line:#1e1e1e;--fg:#eeeae3;--mut:#8a857c;--gold:#c9a96e;--up:#7fb98a;--down:#c9776e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh}
+a{color:inherit;text-decoration:none}
+button,input,textarea,select{font:inherit;color:inherit}
+.serif{font-family:"Instrument Serif",serif;font-weight:400}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:10;background:rgba(10,10,10,.8);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.logo{font-family:"Instrument Serif",serif;font-size:24px;letter-spacing:.02em}
+.logo b{color:var(--gold);font-weight:400}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav a{padding:8px 12px;border-radius:99px;color:var(--mut);font-size:14px;white-space:nowrap;transition:.2s}
+nav a:hover{color:var(--fg)}
+nav a.on{color:var(--fg);background:#1a1a1a}
+nav a.cta{color:var(--bg);background:var(--fg)}
+main{padding:56px 0 96px;animation:in .5s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.eyebrow{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:"Instrument Serif",serif;font-weight:400;font-size:clamp(48px,9vw,96px);line-height:1;letter-spacing:-.02em;margin:14px 0 18px}
+h1 i{color:var(--gold)}
+h2{font-family:"Instrument Serif",serif;font-weight:400;font-size:36px;line-height:1.1;margin-bottom:20px}
+.lead{color:var(--mut);max-width:520px;font-size:17px}
+section{margin-top:72px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px}
+.breaking{padding:28px 32px;margin-top:48px;position:relative;overflow:hidden}
+.breaking::before{content:"";position:absolute;inset:0;background:radial-gradient(600px 200px at 0 0,rgba(201,169,110,.12),transparent)}
+.breaking h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:30px;line-height:1.15;margin:8px 0}
+.breaking p{color:var(--mut)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.mover{padding:22px}
+.mover h4{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--mut);font-weight:500;margin-bottom:12px}
+.row{display:grid;grid-template-columns:44px 48px 1fr auto auto;align-items:center;gap:16px;padding:14px 8px;border-bottom:1px solid var(--line);transition:background .2s}
+.row:hover{background:#0f0f0f}
+.row .n{font-family:"Instrument Serif",serif;font-size:26px;color:var(--mut);text-align:center}
+.row:nth-child(-n+3) .n{color:var(--gold)}
+.row .nm{font-weight:500}
+.row .tt{color:var(--mut);font-size:13px}
+.row .elo{color:var(--mut);font-size:13px;font-variant-numeric:tabular-nums}
+.mini{grid-template-columns:36px 40px 1fr auto;padding:10px 0}
+.av{width:48px;height:48px;border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#2a261f,#15130f);display:grid;place-items:center;flex:none}
+.mini .av{width:40px;height:40px}
+.av img{width:100%;height:100%;object-fit:cover}
+.ini{font-family:"Instrument Serif",serif;font-size:22px;color:var(--gold)}
+.chg{font-size:13px;font-variant-numeric:tabular-nums;min-width:48px;text-align:right;color:var(--mut)}
+.chg.up{color:var(--up)}.chg.down{color:var(--down)}.chg.new{color:var(--gold);font-size:11px;letter-spacing:.1em}
+.tag{display:inline-block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid rgba(201,169,110,.35);border-radius:99px;padding:1px 8px;margin-left:8px;vertical-align:middle}
+/* battle */
+.arena{display:grid;grid-template-columns:1fr auto 1fr;gap:20px;align-items:center;margin-top:40px}
+.fighter{cursor:pointer;border-radius:22px;overflow:hidden;position:relative;aspect-ratio:3/4;background:linear-gradient(160deg,#1c1914,#0e0d0b);border:1px solid var(--line);transition:transform .25s,border-color .25s}
+.fighter:hover{transform:translateY(-4px);border-color:var(--gold)}
+.fighter img{width:100%;height:100%;object-fit:cover}
+.fighter .ini{position:absolute;inset:0;display:grid;place-items:center;font-size:120px;opacity:.5}
+.fighter .cap{position:absolute;left:0;right:0;bottom:0;padding:60px 22px 20px;background:linear-gradient(transparent,rgba(0,0,0,.85))}
+.fighter .cap b{font-family:"Instrument Serif",serif;font-weight:400;font-size:32px;display:block;line-height:1.1}
+.fighter .cap span{color:var(--mut);font-size:13px}
+.fighter.win{border-color:var(--gold);transform:scale(1.02)}
+.fighter.lose{opacity:.35;transform:scale(.97)}
+.fighter .res{position:absolute;top:16px;right:16px;background:var(--gold);color:#000;font-weight:600;font-size:13px;border-radius:99px;padding:4px 12px;display:none}
+.fighter.win .res{display:block}
+.vs{font-family:"Instrument Serif",serif;font-style:italic;font-size:40px;color:var(--gold)}
+.hint{color:var(--mut);font-size:13px;text-align:center;margin-top:20px}
+/* person */
+.hero{display:grid;grid-template-columns:320px 1fr;gap:48px;align-items:start}
+.portrait{aspect-ratio:3/4;border-radius:22px;overflow:hidden;background:linear-gradient(160deg,#1c1914,#0e0d0b);display:grid;place-items:center;border:1px solid var(--line)}
+.portrait img{width:100%;height:100%;object-fit:cover}
+.portrait .ini{font-size:120px;opacity:.5}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:28px 0}
+.stats div{padding:18px 0}
+.stats b{font-family:"Instrument Serif",serif;font-weight:400;font-size:34px;display:block;line-height:1}
+.stats span{font-size:12px;color:var(--mut);letter-spacing:.1em;text-transform:uppercase}
+.bio{white-space:pre-line;color:#cfcac1;max-width:600px}
+/* news */
+.news-item{padding:28px 0;border-bottom:1px solid var(--line)}
+.news-item h3{font-family:"Instrument Serif",serif;font-weight:400;font-size:28px;line-height:1.2;margin:6px 0 8px}
+.news-item p{color:var(--mut);white-space:pre-line;max-width:720px}
+.date{font-size:12px;color:var(--mut);letter-spacing:.08em}
+/* forms */
+.form{display:grid;gap:14px;max-width:560px;margin-top:32px}
+label{font-size:13px;color:var(--mut);display:grid;gap:6px}
+input,textarea,select{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;outline:none;transition:border-color .2s;width:100%}
+input:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:110px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start;color:var(--mut);font-size:13px}
+.check input{width:auto;margin-top:4px}
+.btn{background:var(--fg);color:var(--bg);border:0;border-radius:99px;padding:13px 26px;font-weight:600;cursor:pointer;transition:opacity .2s;justify-self:start}
+.btn:hover{opacity:.85}.btn:disabled{opacity:.4}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line);padding:8px 16px;font-weight:500}
+.btn.sm{padding:6px 14px;font-size:13px}
+.drop{border:1px dashed #333;border-radius:14px;padding:22px;text-align:center;color:var(--mut);cursor:pointer;display:grid;place-items:center;gap:10px}
+.drop img{max-height:220px;border-radius:10px}
+.msg{font-size:14px}.msg.err{color:var(--down)}.msg.ok{color:var(--up)}
+.empty{color:var(--mut);padding:40px 0}
+.tabs{display:flex;gap:8px;margin:24px 0}
+.adm{display:grid;grid-template-columns:72px 1fr auto;gap:16px;align-items:start;padding:16px 0;border-bottom:1px solid var(--line)}
+.adm img{width:72px;height:96px;object-fit:cover;border-radius:10px}
+.adm .acts{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+footer{border-top:1px solid var(--line);padding:32px 0;color:var(--mut);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+footer a:hover{color:var(--fg)}
+@media (max-width:720px){
+  header .wrap{height:auto;padding:12px 16px;flex-direction:column;align-items:flex-start;gap:8px}
+  .wrap{padding:0 16px}
+  main{padding-top:36px}
+  .grid2,.hero{grid-template-columns:1fr}
+  .hero{gap:28px}.portrait{max-width:320px}
+  .row{grid-template-columns:32px 40px 1fr auto;gap:12px}
+  .row .elo{display:none}.row .av{width:40px;height:40px}
+  .arena{grid-template-columns:1fr 1fr;gap:10px}
+  .vs{display:none}
+  .fighter .cap{padding:40px 12px 12px}.fighter .cap b{font-size:22px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .breaking{padding:22px}
+}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <a class="logo" href="#/">CHAD<b>BATTLE</b></a>
+  <nav>
+    <a href="#/">Рейтинг</a><a href="#/battle">Батл</a><a href="#/news">Новости</a><a class="cta" href="#/apply">Подать заявку</a>
+  </nav>
+</div></header>
+<main class="wrap" id="app"></main>
+<footer><div class="wrap">
+  <span>© 2026 CHADBATTLE · экосистема looksmaxxing</span>
+  <span><a href="https://facerate.ru" target="_blank" rel="noopener">FaceRate</a> · <a href="https://looks-maks.ru" target="_blank" rel="noopener">Looks-Maks</a></span>
+</div></footer>
+<script>
+const API = 'https://chadbattle.realfactchecknews.workers.dev';
+const app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const req = async (path, opt = {}) => {
+  const r = await fetch(API + path, { ...opt, headers: { 'content-type': 'application/json', ...opt.headers }, body: opt.body && JSON.stringify(opt.body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || 'Ошибка ' + r.status);
+  return d;
+};
+const photo = p => p.has_photo ? `<img src="${API}/api/photo/${p.id}" loading="lazy" alt="${esc(p.name)}">` : `<span class="ini">${esc(p.name[0])}</span>`;
+const change = p => p.prev_rank == null ? '<span class="chg new">NEW</span>' : (d => d > 0 ? `<span class="chg up">▲ ${d}</span>` : d < 0 ? `<span class="chg down">▼ ${-d}</span>` : '<span class="chg">—</span>')(p.prev_rank - p.rank);
+const date = t => new Date(t * 1000).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+const tag = p => p.kind === 'user' ? '<span class="tag">участник</span>' : '';
+const loading = () => app.innerHTML = '<p class="empty">Загрузка…</p>';
+const fail = e => app.innerHTML = `<p class="empty">${esc(e.message)}</p>`;
+
+// Ужимаем фото на клиенте до 800px JPEG, чтобы влезть в лимит API
+const shrink = file => new Promise((ok, no) => {
+  const img = new Image();
+  img.onload = () => {
+    const s = Math.min(1, 800 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+    c.width = img.width * s; c.height = img.height * s;
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    URL.revokeObjectURL(img.src);
+    ok(c.toDataURL('image/jpeg', 0.85));
+  };
+  img.onerror = () => no(new Error('Не удалось прочитать фото'));
+  img.src = URL.createObjectURL(file);
+});
+
+const routes = {
+  async '' () {
+    const [list, news] = await Promise.all([req('/api/rankings'), req('/api/news')]);
+    const br = news.find(n => n.breaking);
+    const moved = list.filter(p => p.prev_rank != null && p.prev_rank !== p.rank).map(p => ({ ...p, d: p.prev_rank - p.rank }));
+    const risers = moved.filter(p => p.d > 0).sort((a, b) => b.d - a.d).slice(0, 3);
+    const drops = moved.filter(p => p.d < 0).sort((a, b) => a.d - b.d).slice(0, 3);
+    const mini = p => `<a class="row mini" href="#/p/${esc(p.slug)}"><span class="n">${p.rank}</span><span class="av">${photo(p)}</span><span class="nm">${esc(p.name)}</span>${change(p)}</a>`;
+    app.innerHTML = `
+      <div class="eyebrow">Народный рейтинг · обновляется с каждым голосом</div>
+      <h1>Рейтинг <i>чадов</i></h1>
+      <p class="lead">Голосуй в батлах один на один. Elo решает, кто на вершине, а каждый понедельник мы фиксируем главные взлёты и падения.</p>
+      ${br ? `<a class="card breaking" href="#/news" style="display:block"><div class="eyebrow">Срочно</div><h3>${esc(br.title)}</h3><p>${esc(br.body.slice(0, 220))}</p></a>` : ''}
+      ${risers.length || drops.length ? `<section><h2>Взлёты и падения недели</h2><div class="grid2">
+        <div class="card mover"><h4>Взлёты</h4>${risers.map(mini).join('') || '<p class="tt">Пока тихо</p>'}</div>
+        <div class="card mover"><h4>Падения</h4>${drops.map(mini).join('') || '<p class="tt">Пока тихо</p>'}</div>
+      </div></section>` : ''}
+      <section><h2>Полный рейтинг</h2>
+        ${list.map(p => `<a class="row" href="#/p/${esc(p.slug)}"><span class="n">${p.rank}</span><span class="av">${photo(p)}</span>
+          <span><div class="nm">${esc(p.name)}${tag(p)}</div><div class="tt">${esc(p.title)}</div></span>
+          <span class="elo">${Math.round(p.elo)}</span>${change(p)}</a>`).join('') || '<p class="empty">Рейтинг пуст</p>'}
+      </section>
+      <section style="text-align:center"><a class="btn" href="#/battle">Перейти к батлу</a></section>`;
+  },
+
+  async battle () {
+    const { token, pair } = await req('/api/battle');
+    app.innerHTML = `
+      <div class="eyebrow">Батл</div><h1>Кто <i>мощнее?</i></h1>
+      <p class="lead">Выбери одного. Голос анонимный и сразу меняет рейтинг.</p>
+      <div class="arena">
+        ${pair.map((p, i) => `${i ? '<div class="vs">vs</div>' : ''}<div class="fighter" data-id="${p.id}">
+          ${photo(p)}<div class="res"></div><div class="cap"><b>${esc(p.name)}</b><span>#${p.rank} · ${esc(p.title)}</span></div></div>`).join('')}
+      </div>
+      <p class="hint">← → на клавиатуре · <a href="#/battle" onclick="setTimeout(render)">пропустить</a></p>`;
+    const cards = [...app.querySelectorAll('.fighter')];
+    let done = false;
+    const vote = async el => {
+      if (done) return; done = true;
+      try {
+        const { delta } = await req('/api/vote', { method: 'POST', body: { token, winner: +el.dataset.id } });
+        cards.forEach(c => c.classList.add(c === el ? 'win' : 'lose'));
+        el.querySelector('.res').textContent = `+${delta} Elo`;
+        setTimeout(() => location.hash === '#/battle' && render(), 900);
+      } catch (e) { alert(e.message); render(); }
+    };
+    cards.forEach(c => c.onclick = () => vote(c));
+    onkey = e => { if (e.key === 'ArrowLeft') vote(cards[0]); if (e.key === 'ArrowRight') vote(cards[1]); };
+  },
+
+  async p (slug) {
+    const p = await req('/api/person/' + encodeURIComponent(slug));
+    document.title = `${p.name} — CHADBATTLE`;
+    app.innerHTML = `<div class="hero">
+      <div class="portrait">${photo(p)}</div>
+      <div>
+        <div class="eyebrow">${p.kind === 'user' ? 'Участник' : 'Медиа-персона'}</div>
+        <h1>${esc(p.name)}</h1>
+        <p class="lead serif" style="font-size:24px;font-style:italic">${esc(p.title)}</p>
+        <div class="stats">
+          <div><b>#${p.rank}</b><span>Место</span></div>
+          <div><b>${Math.round(p.elo)}</b><span>Elo</span></div>
+          <div><b>${p.wins}</b><span>Побед</span></div>
+          <div><b>${p.battles ? Math.round(p.wins / p.battles * 100) : 0}%</b><span>Винрейт</span></div>
+        </div>
+        <p class="bio">${esc(p.bio) || 'Описание скоро появится.'}</p>
+        <p style="margin-top:28px">${change(p)} <span class="tt">за неделю</span></p>
+      </div></div>`;
+  },
+
+  async news () {
+    const news = await req('/api/news');
+    app.innerHTML = `<div class="eyebrow">Главное в мире looksmaxxing</div><h1>Новости</h1>
+      ${news.map(n => `<article class="news-item"><div class="date">${n.breaking ? '<span class="tag" style="margin:0 8px 0 0">срочно</span>' : ''}${date(n.created)}</div>
+        <h3>${esc(n.title)}</h3><p>${esc(n.body)}</p></article>`).join('') || '<p class="empty">Новостей пока нет</p>'}`;
+  },
+
+  apply () {
+    app.innerHTML = `<div class="eyebrow">Участие</div><h1>Подать <i>заявку</i></h1>
+      <p class="lead">Пройди модерацию и попади в батлы. Нужно одно чёткое фото лица при хорошем свете, без фильтров.</p>
+      <form class="form" id="f">
+        <label>Имя или ник<input name="name" maxlength="60" required></label>
+        <label>Telegram или другой контакт<input name="contact" maxlength="80" placeholder="@username" required></label>
+        <label>О себе<textarea name="bio" maxlength="600" placeholder="Рост, возраст, чем занимаешься, какой у тебя looksmaxxing"></textarea></label>
+        <label class="drop" id="drop">Нажми, чтобы выбрать фото<input type="file" accept="image/*" hidden></label>
+        <label class="check"><input type="checkbox" required> Мне есть 18 лет, на фото я, и я согласен на публикацию фото и описания на сайте.</label>
+        <button class="btn">Отправить заявку</button>
+        <p class="msg" id="m"></p>
+      </form>`;
+    let data = '';
+    const f = app.querySelector('#f'), m = app.querySelector('#m'), drop = app.querySelector('#drop');
+    drop.querySelector('input').onchange = async e => {
+      try { data = await shrink(e.target.files[0]); drop.innerHTML = `<img src="${data}" alt="">`; drop.append(e.target); }
+      catch (er) { m.className = 'msg err'; m.textContent = er.message; }
+    };
+    f.onsubmit = async e => {
+      e.preventDefault();
+      if (!data) { m.className = 'msg err'; m.textContent = 'Добавь фото'; return; }
+      f.querySelector('button').disabled = true;
+      try {
+        await req('/api/apply', { method: 'POST', body: { ...Object.fromEntries(new FormData(f)), photo: data } });
+        app.innerHTML = '<div class="eyebrow">Готово</div><h1>Заявка <i>принята</i></h1><p class="lead">Мы свяжемся с тобой после модерации.</p>';
+      } catch (er) { m.className = 'msg err'; m.textContent = er.message; f.querySelector('button').disabled = false; }
+    };
+  },
+
+  async admin (tab = 'applications') {
+    let key = '';
+    try { key = localStorage.cbKey || ''; } catch {}
+    if (!key) {
+      app.innerHTML = `<h1>Админка</h1><form class="form" id="k"><label>Ключ<input type="password" name="k" required></label><button class="btn">Войти</button></form>`;
+      app.querySelector('#k').onsubmit = e => { e.preventDefault(); try { localStorage.cbKey = e.target.k.value.trim(); } catch {} render(); };
+      return;
+    }
+    const adm = (path, opt = {}) => req('/api/admin/' + path, { ...opt, headers: { 'x-admin-key': key } }).catch(e => {
+      if (/ключ/i.test(e.message)) { try { localStorage.removeItem('cbKey'); } catch {} }
+      alert(e.message); throw e;
+    });
+    const tabs = `<h1>Админка</h1><div class="tabs">
+      ${[['applications', 'Заявки'], ['persons', 'Персоны'], ['news', 'Новости']].map(([t, n]) => `<a class="btn ${t === tab ? '' : 'ghost'} sm" href="#/admin/${t}">${n}</a>`).join('')}
+      <button class="btn ghost sm" id="snap">Зафиксировать неделю</button></div>`;
+    const bind = () => app.querySelector('#snap').onclick = async () => confirm('Сохранить текущие места как базу для взлётов/падений?') && (await adm('snapshot', { method: 'POST' }), alert('Готово'));
+
+    if (tab === 'applications') {
+      const list = await adm('applications');
+      app.innerHTML = tabs + (list.map(a => `<div class="adm"><img src="${a.photo}" alt="">
+        <div><b>${esc(a.name)}</b> · ${esc(a.contact)}<div class="tt">${date(a.created)}</div><p class="bio" style="font-size:14px">${esc(a.bio)}</p></div>
+        <div class="acts"><button class="btn sm" data-ok="${a.id}">Одобрить</button><button class="btn ghost sm" data-del="${a.id}">Удалить</button></div></div>`).join('') || '<p class="empty">Новых заявок нет</p>');
+      app.querySelectorAll('[data-ok]').forEach(b => b.onclick = async () => {
+        const title = prompt('Титул участника (например «Скульптор скул»)', 'Новичок');
+        if (title == null) return;
+        await adm(`applications/${b.dataset.ok}/approve`, { method: 'POST', body: { title } }); render();
+      });
+      app.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => confirm('Удалить заявку?') && (await adm('applications/' + b.dataset.del, { method: 'DELETE' }), render()));
+    }
+
+    if (tab === 'persons') {
+      const list = await req('/api/rankings');
+      app.innerHTML = tabs + `<form class="form card" id="pf" style="padding:24px;max-width:none">
+          <h2 id="pft" style="margin:0">Новая персона</h2><input type="hidden" name="id">
+          <div class="grid2"><label>Имя<input name="name" required></label><label>Титул<input name="title" placeholder="Генетический апекс"></label></div>
+          <div class="grid2"><label>Slug (адрес страницы)<input name="slug" placeholder="авто из имени"></label>
+          <label>Тип<select name="kind"><option value="media">Медиа-персона</option><option value="user">Участник</option></select></label></div>
+          <label>Описание<textarea name="bio"></textarea></label>
+          <div class="grid2"><label>Фото: ссылка<input name="photo" placeholder="https://… (пусто — оставить текущее)"></label>
+          <label>…или файл<input type="file" accept="image/*" id="pfile"></label></div>
+          <div style="display:flex;gap:8px"><button class="btn">Сохранить</button><button type="button" class="btn ghost" id="pnew">Сбросить</button></div>
+        </form>` +
+        list.map(p => `<div class="adm" style="grid-template-columns:48px 1fr auto"><span class="av">${photo(p)}</span>
+          <div><b>#${p.rank} ${esc(p.name)}</b>${tag(p)}<div class="tt">${esc(p.title)} · ${Math.round(p.elo)} Elo · /${esc(p.slug)}</div></div>
+          <div class="acts"><button class="btn ghost sm" data-ed="${esc(p.slug)}">Изменить</button><button class="btn ghost sm" data-del="${p.id}">Удалить</button></div></div>`).join('');
+      const pf = app.querySelector('#pf'), el = pf.elements; // pf.id/pf.name — атрибуты формы, поля берём через elements
+      let file = '';
+      app.querySelector('#pfile').onchange = async e => file = await shrink(e.target.files[0]);
+      app.querySelector('#pnew').onclick = () => { pf.reset(); el.id.value = ''; file = ''; app.querySelector('#pft').textContent = 'Новая персона'; };
+      pf.onsubmit = async e => {
+        e.preventDefault();
+        const body = Object.fromEntries(new FormData(pf));
+        if (file) body.photo = file;
+        await adm('person', { method: 'POST', body }); render();
+      };
+      app.querySelectorAll('[data-ed]').forEach(b => b.onclick = async () => {
+        const p = await req('/api/person/' + encodeURIComponent(b.dataset.ed));
+        for (const k of ['id', 'name', 'title', 'slug', 'kind', 'bio']) el[k].value = p[k] ?? '';
+        el.photo.value = ''; file = '';
+        app.querySelector('#pft').textContent = 'Изменить: ' + p.name;
+        pf.scrollIntoView({ behavior: 'smooth' });
+      });
+      app.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => confirm('Удалить персону навсегда?') && (await adm('person/' + b.dataset.del, { method: 'DELETE' }), render()));
+    }
+
+    if (tab === 'news') {
+      const news = await req('/api/news');
+      app.innerHTML = tabs + `<form class="form card" id="nf" style="padding:24px;max-width:none">
+          <label>Заголовок<input name="title" required></label><label>Текст<textarea name="body"></textarea></label>
+          <label class="check"><input type="checkbox" name="breaking"> Срочная новость (на главной)</label><button class="btn">Опубликовать</button></form>` +
+        news.map(n => `<div class="adm" style="grid-template-columns:1fr auto"><div><b>${esc(n.title)}</b>${n.breaking ? '<span class="tag">срочно</span>' : ''}<div class="tt">${date(n.created)}</div></div>
+          <div class="acts"><button class="btn ghost sm" data-del="${n.id}">Удалить</button></div></div>`).join('');
+      app.querySelector('#nf').onsubmit = async e => { e.preventDefault(); await adm('news', { method: 'POST', body: Object.fromEntries(new FormData(e.target)) }); render(); };
+      app.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => confirm('Удалить новость?') && (await adm('news/' + b.dataset.del, { method: 'DELETE' }), render()));
+    }
+    bind();
+  },
+};
+
+async function render() {
+  const [name, ...args] = location.hash.replace(/^#\/?/, '').split('/');
+  onkey = null;
+  document.title = 'CHADBATTLE — рейтинг чадов';
+  document.querySelectorAll('nav a').forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#/' + name));
+  scrollTo(0, 0);
+  loading();
+  try { await (routes[name] || routes[''])(...args.map(decodeURIComponent)); } catch (e) { fail(e); }
+}
+let onkey = null;
+addEventListener('keydown', e => onkey && !/INPUT|TEXTAREA/.test(e.target.tagName) && onkey(e));
+addEventListener('hashchange', render);
+render();
+</script>
+</body>
+</html>
